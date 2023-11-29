@@ -4,21 +4,25 @@ import Button from "../UI/Button";
 import { useState } from "react";
 import ErrorModal from "../UI/ErrorModal";
 import React from "react";
+import { useRef } from "react";
 
 const AddUser = (props) => {
-  const [enteredName, setEnteredName] = useState("");
-  const [enteredAge, setEnteredAge] = useState("");
+  console.log("Ram");
+  const inputNameRef = useRef();
+  const inputAgeRef = useRef();
+  const inputCollegeRef = useRef();
   const [error, setError] = useState();
-  const nameChangeHandler = (event) => {
-    setEnteredName(event.target.value);
-  };
-  const ageChangeHandler = (event) => {
-    setEnteredAge(event.target.value);
-  };
 
   const addUserHandler = (event) => {
     event.preventDefault();
-    if (enteredName.trim().length === 0 || enteredAge.trim().length === 0) {
+    const enteredUserAge = inputAgeRef.current.value;
+    const enteredUserName = inputNameRef.current.value;
+    const enteredUserCollegeName = inputCollegeRef.current.value;
+    if (
+      enteredUserName.trim().length === 0 ||
+      enteredUserAge.trim().length === 0 ||
+      enteredUserCollegeName.trim().length === 0
+    ) {
       setError({
         title: "Invalid input!",
         message:
@@ -26,17 +30,21 @@ const AddUser = (props) => {
       });
       return;
     }
-    if (+enteredAge < 0) {
+    if (+enteredUserAge < 0) {
       setError({
         title: "Invalid age!",
         message: "Please enter valid age (age should be >0).",
       });
       return;
     }
-    props.addUserInList(enteredName, enteredAge);
-
-    setEnteredAge("");
-    setEnteredName("");
+    props.addUserInList(
+      enteredUserName,
+      enteredUserAge,
+      enteredUserCollegeName
+    );
+    inputNameRef.current.value = "";
+    inputAgeRef.current.value = "";
+    inputCollegeRef.current.value = "";
   };
   const setErrorHandler = () => {
     setError(false);
@@ -57,17 +65,17 @@ const AddUser = (props) => {
           <input
             id="username"
             type="text"
-            value={enteredName}
             placeholder="username"
-            onChange={nameChangeHandler}
+            ref={inputNameRef}
           />
           <label htmlFor="age">Age(Years):</label>
+          <input id="age" type="number" placeholder="age" ref={inputAgeRef} />
+          <label htmlFor="collegeName">College Name:</label>
           <input
-            id="age"
-            type="number"
-            value={enteredAge}
-            placeholder="age"
-            onChange={ageChangeHandler}
+            id="collegeName"
+            type="text"
+            placeholder="College Name"
+            ref={inputCollegeRef}
           />
           <Button type="submit">Add User</Button>
         </form>
