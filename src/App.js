@@ -1,24 +1,23 @@
-import logo from './logo.svg';
-import './App.css';
+import Order from "./components/Order/Order";
+import Table from "./components/Table/Table";
+import React, { useState } from "react";
 
 function App() {
+  let count = 1;
+  console.log("count is", count + 1);
+
+  const [value, setValue] = useState();
+
+  const orderDetailHandler = (obj) => {
+    console.log("oreders are", obj);
+    setValue(obj);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <React.Fragment>
+      <Order orderDetail={orderDetailHandler} />
+      <Table values={value} />
+    </React.Fragment>
   );
 }
 
