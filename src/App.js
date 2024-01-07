@@ -1,24 +1,20 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import Header from "./component/header/Header";
+import Item from "./component/Item/Item";
+import ContextProvider from "./assets/ContextProvider";
+import CartButton from "./component/Cart/CartButton";
 
 function App() {
+  const [candyValue, setCandyValue] = useState();
+  const newCandyHandler = (newCandy) => {
+    setCandyValue(newCandy);
+  };
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ContextProvider>
+      <CartButton />
+      <Header newCandies={newCandyHandler} />
+      {candyValue && <Item candyValue={candyValue} />}
+    </ContextProvider>
   );
 }
 
