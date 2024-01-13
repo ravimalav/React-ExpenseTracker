@@ -1,40 +1,40 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import CandyBuyButton from "./candybuybutton";
+import MedicineBuyButton from "./Medicinebuybutton";
 import CartContext from "../../assets/CartContext";
+import Card from "../UI/Card";
+import MedicineContext from "../../assets/MedicineContext";
+import classes from "./Item.module.css";
 
 const Item = (props) => {
   const cartCntx = useContext(CartContext);
-  const [candyArray, setCandyArray] = useState([]);
-  const isMounted = useRef(false);
-  useEffect(() => {
-    if (isMounted.current) {
-      console.log("useEffect");
-      setCandyArray((prevCandyArrayValue) => [
-        ...prevCandyArrayValue,
-        props.candyValue,
-      ]);
-    }
-    isMounted.current = true;
-  }, [props.candyValue]);
+  const medicineCntx = useContext(MedicineContext);
 
   const onClickHandler = (value) => {
-    const { id } = value;
-    const { itemQuantity } = value;
-    console.log("buying quantity is ", itemQuantity);
-    cartCntx.candyQuantity(itemQuantity);
-    const currentCandy = candyArray.filter((candy) => candy.id === id);
-    cartCntx.addCandy(currentCandy);
+    medicineCntx.decreaseQuantity(value.id);
+    cartCntx.addMedicineInCart(value);
   };
 
-  const newCandies = candyArray.map((item, index) => (
-    <ul index={index}>
-      <li>
-        {item.name} {item.description} {item.price}{" "}
-        <CandyBuyButton itemId={item.id} onClick={onClickHandler} />
+  console.log("medicine array", medicineCntx.medicineArray);
+
+  const newCandies = medicineCntx.medicineArray.map((item, index) => (
+    <ul index={index} className={classes.ul}>
+      <li className={classes.li}>
+        <div>
+          <span>name:-{item.name}</span>
+          {" , "}
+          <span>use:-{item.use}</span>
+          {" , "}
+          <span>price:-{item.price}</span>
+          {" , "}
+          <span>quantity:-{item.quantity}</span>
+        </div>
+        <div>
+          <MedicineBuyButton item={item} onClick={onClickHandler} />
+        </div>
       </li>
     </ul>
   ));
 
-  return <div>{newCandies}</div>;
+  return <Card>{newCandies}</Card>;
 };
 export default Item;

@@ -1,28 +1,75 @@
-import React, { useState } from "react";
+import React, { useReducer } from "react";
 import CartContext from "./CartContext";
 
-const ContextProvider = (props) => {
-  const [quantity, setQuantity] = useState(0);
-  const [cartItem, setCartItem] = useState([]);
-  const candyQuantityHandler = (newQuantity) => {
-    setQuantity(quantity + newQuantity);
-  };
-  const addCandyHandler = (item) => {
-    console.log("items are ", item[0].id);
-    const candyIndex = cartItem.findIndex((candy) => candy.id === item.id);
-    const candyInCartItemArray = cartItem[candyIndex];
-    console.log("candyInCartItemArray ", candyIndex);
-    if (candyInCartItemArray) {
-      return;
+const defaultCart = {
+  totalAmount: 0,
+  itemArray: [],
+};
+
+const cartReducer = (state, action) => {
+  if (action.type === "ADD") {
+    const updatedTotalAmount = state.totalAmount + action.item.price;
+    const existingItemIndex = state.itemArray.findIndex(
+      (item) => item.id === action.item.id
+    );
+    const existingItem = state.itemArray[existingItemIndex];
+    let updatedItemArray;
+    if (existingItem) {
+      const updatedItem = {
+        ...existingItem,
+        quantity: existingItem.quantity + 1,
+      };
+      updatedItemArray = [...state.itemArray];
+      updatedItemArray[existingItemIndex] = updatedItem;
     } else {
-      setCartItem(cartItem.concat(item));
+      updatedItemArray = state.itemArray.concat(action.item);
     }
+    return {
+      totalAmount: updatedTotalAmount,
+      itemArray: updatedItemArray,
+    };
+  }
+
+  if (action.type === "REMOVE") {
+    const existingItemIndex = state.itemArray.findIndex(
+      (item) => item.id === action.id
+    );
+    const existingItem = state.itemArray[existingItemIndex];
+    const updatedTotalAmount = state.totalAmount - existingItem.price;
+    let updatedItemArray;
+    if (existingItem.quantity === 1) {
+      updatedItemArray = state.itemArray.filter(
+        (item) => item.id !== action.id
+      );
+    } else {
+      const updatedItem = {
+        ...existingItem,
+        quantity: existingItem.quantity - 1,
+      };
+      updatedItemArray = [...state.itemArray];
+      updatedItemArray[existingItemIndex] = updatedItem;
+    }
+    return {
+      totalAmount: updatedTotalAmount,
+      itemArray: updatedItemArray,
+    };
+  }
+  return defaultCart;
+};
+
+const ContextProvider = (props) => {
+  const [cartState, dispatchCartAction] = useReducer(cartReducer, defaultCart);
+  const addMedicineInCartHandler = (item) => {
+    dispatchCartAction({ type: "ADD", item: item });
+  };
+  const removeMedicineFromCartHandler = (id) => {
+    dispatchCartAction({ type: "REMOVE", id: id });
   };
   const cartContext = {
-    quantity: quantity,
-    itemArray: cartItem,
-    candyQuantity: candyQuantityHandler,
-    addCandy: addCandyHandler,
+    totalAmount: cartState.totalAmount,
+    itemArray: cartState.itemArray,
+    addMedicineInCart: addMedicineInCartHandler,
+    removeMedicineFromCart: removeMedicineFromCartHandler,
   };
 
   return (

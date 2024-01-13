@@ -1,41 +1,49 @@
-import { useRef } from "react";
+import { useContext, useRef } from "react";
 import Input from "../UI/Input";
+import classes from "./header.module.css";
+import MedicineContext from "../../assets/MedicineContext";
 
 const Header = (props) => {
+  const medicineCntx = useContext(MedicineContext);
   const name = useRef();
-  const desc = useRef();
+  const use = useRef();
   const price = useRef();
+  const quantity = useRef();
 
   const formDataHandler = (event) => {
     event.preventDefault();
+    const numberedPrice = +price.current.value;
+    const numberedQuantity = +quantity.current.value;
     const formData = {
       id: Math.random(),
       name: name.current.value,
-      description: desc.current.value,
-      price: price.current.value,
+      use: use.current.value,
+      price: numberedPrice,
+      quantity: numberedQuantity,
     };
-    props.newCandies(formData);
+    medicineCntx.addMedicine(formData);
     name.current.value = "";
-    desc.current.value = "";
+    use.current.value = "";
     price.current.value = "";
+    quantity.current.value = "";
   };
 
   return (
-    <form onSubmit={formDataHandler}>
-      <div>
-        <h2>Add candies in your shop</h2>
-        <div>
+    <div className={classes.box}>
+      <h2>Add Medicine in your shop</h2>
+      <form className={classes.form} onSubmit={formDataHandler}>
+        <div className={classes["form-element"]}>
           <Input
             ref={name}
-            lable={"Candy Name"}
+            lable={"Medicine Name"}
             input={{
               id: "1",
               type: "text",
             }}
           />
           <Input
-            ref={desc}
-            lable={"Description"}
+            ref={use}
+            lable={"Medicine Use"}
             input={{
               id: "2",
               type: "text",
@@ -47,16 +55,22 @@ const Header = (props) => {
             input={{
               id: "3",
               type: "number",
-              min: 1,
-              max: 5,
+            }}
+          />
+          <Input
+            ref={quantity}
+            lable={"Qunatity"}
+            input={{
+              id: "4",
+              type: "number",
             }}
           />
         </div>
         <div>
-          <button>Add Candy</button>
+          <button>Add Medicine</button>
         </div>
-      </div>
-    </form>
+      </form>
+    </div>
   );
 };
 

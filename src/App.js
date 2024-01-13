@@ -2,18 +2,28 @@ import React, { useState } from "react";
 import Header from "./component/header/Header";
 import Item from "./component/Item/Item";
 import ContextProvider from "./assets/ContextProvider";
-import CartButton from "./component/Cart/CartButton";
+import Cart from "./component/Cart/Cart";
+import Headertop from "./component/header/Headertop";
+
+import MedicineProvider from "./assets/MedicineContextProvider";
 
 function App() {
-  const [candyValue, setCandyValue] = useState();
-  const newCandyHandler = (newCandy) => {
-    setCandyValue(newCandy);
+  const [cartStatus, setCartStatus] = useState(false);
+  const showCartHandler = () => {
+    setCartStatus(true);
+  };
+  const hideCartHandler = () => {
+    setCartStatus(false);
   };
   return (
     <ContextProvider>
-      <CartButton />
-      <Header newCandies={newCandyHandler} />
-      {candyValue && <Item candyValue={candyValue} />}
+      {cartStatus && <Cart onClose={hideCartHandler} />}
+      <Headertop showCart={showCartHandler} />
+      <MedicineProvider>
+        <Header />
+        <br />
+        <Item />
+      </MedicineProvider>
     </ContextProvider>
   );
 }
