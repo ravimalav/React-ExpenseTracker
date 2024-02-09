@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import CartContext from "../../assets/CartContext";
 import Modal from "./Modal";
 import classes from "./Cart.module.css";
@@ -14,6 +14,7 @@ const Cart = (props) => {
     const findMedicine = medicineCntx.medicineArray.filter(
       (medicine) => medicine.id === id
     );
+    console.log("medicine in cart handler", findMedicine);
     medicineCntx.addMedicine(findMedicine);
     cartCntx.removeMedicineFromCart(id);
   };
@@ -21,11 +22,29 @@ const Cart = (props) => {
     cartCntx.addMedicineInCart(item);
   };
 
+  const [fetchedCartItem, setFetchCartItem] = useState([]);
+
+  const fetchedData = async () => {
+    try {
+      const response =
+        await fetch(`https://crudcrud.com/api/6340faac231648fb80533d90a922da49/cart
+    `);
+      const getData = await response.json();
+      setFetchCartItem(getData);
+    } catch (err) {
+      console.log("error at cart", err);
+    }
+  };
+
+  useState(() => {
+    fetchedData();
+  }, [cartCntx.itemArray]);
+
   const cartItems = (
     <ul className={classes["cart-items"]}>
-      {cartCntx.itemArray.map((item) => (
+      {fetchedCartItem.map((item) => (
         <CartItem
-          key={item.id}
+          // key={item.id}
           id={item.id}
           name={item.name}
           price={item.price}

@@ -8,15 +8,34 @@ import classes from "./Item.module.css";
 const Item = (props) => {
   const cartCntx = useContext(CartContext);
   const medicineCntx = useContext(MedicineContext);
+  const [shopData, setShopData] = useState([]);
 
-  const onClickHandler = (value) => {
-    medicineCntx.decreaseQuantity(value.id);
+  const onClickHandler = async (value) => {
     cartCntx.addMedicineInCart(value);
+    medicineCntx.decreaseQuantity(value.id);
   };
+  const fetchData = async () => {
+    try {
+      const response = await fetch(
+        `https://crudcrud.com/api/6340faac231648fb80533d90a922da49/shop
+        `
+      );
+      const data = await response.json();
+      // Handle the fetched data as needed
+      setShopData(data);
+      console.log("Fetched data from CRUD CRUD:", data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData(); // Call the fetchData function when the component mounts or when medicineArray is updated
+  }, [medicineCntx.medicineArray]);
 
   console.log("medicine array", medicineCntx.medicineArray);
 
-  const newCandies = medicineCntx.medicineArray.map((item, index) => (
+  const newCandies = shopData.map((item, index) => (
     <ul index={index} className={classes.ul}>
       <li className={classes.li}>
         <div>

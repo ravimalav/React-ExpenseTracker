@@ -1,10 +1,6 @@
 import { useState } from "react";
 
 const MedicineBuyButton = (props) => {
-  // const [itemState, setItemState] = useState(true);
-  // if (props.item.quantity === 0) {
-  //   setItemState(false);
-  // }
   const hasQuantity = props.item.quantity > 0;
   const newItem = { ...props.item, quantity: 1 };
   const buyOneHandler = () => {
