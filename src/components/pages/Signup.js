@@ -1,9 +1,13 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import classes from "./Signup.module.css";
+import AuthContext from "../../store/context-api/AuthContext";
+import { Redirect } from "react-router-dom";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const Signup = () => {
+  const history = useHistory();
+  const authCtx = useContext(AuthContext);
   const [isLoggedin, setIsLoggedIn] = useState(false);
-
   const emailRef = useRef();
   const passwordRef = useRef();
   const confirmPasswordRef = useRef();
@@ -15,34 +19,48 @@ const Signup = () => {
   const onSubmitHandler = async (event) => {
     event.preventDefault();
     const password = passwordRef.current.value;
-    const confirmPassword = confirmPasswordRef.current.value;
-    if (password !== confirmPassword) {
+    let url;
+    if (!isLoggedin && password !== confirmPasswordRef.current.value) {
       alert("pasword and conform passwor is not same");
+    }
+    if (isLoggedin) {
+      url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDtBsLdNVtUh3yOGqGP2ZbFXcXM-Y8d0Dc`;
     } else {
+      url = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDtBsLdNVtUh3yOGqGP2ZbFXcXM-Y8d0Dc`;
+    }
+    try {
       const loginDetails = {
         email: emailRef.current.value,
         password: password,
+        returnSecureToken: true,
       };
-      try {
-        const response = await fetch(
-          `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDtBsLdNVtUh3yOGqGP2ZbFXcXM-Y8d0Dc`,
-          {
-            method: "post",
-            body: JSON.stringify(loginDetails),
-            headers: { "Content-Type": "application/json" },
-          }
-        );
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+      const response = await fetch(url, {
+        method: "post",
+        body: JSON.stringify(loginDetails),
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await response.json();
+      console.log("data of authentication", data);
+      if (isLoggedin && response.ok) {
+        authCtx.addToken(data.idToken);
+        history.replace("/home");
+      } else {
+        if (data && data.error) {
+          isLoggedin && alert(`${response.status}`);
         }
-        const data = await response.json();
-        console.log("data of authentication", data);
-      } catch (err) {}
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+    } catch (err) {
+      console.log(err);
     }
-
-    emailRef.current.value = "";
-    passwordRef.current.value = "";
-    confirmPasswordRef.current.value = "";
+    if (!isLoggedin) {
+      emailRef.current.value = "";
+      passwordRef.current.value = "";
+      confirmPasswordRef.current.value = "";
+    } else {
+      emailRef.current.value = "";
+      passwordRef.current.value = "";
+    }
   };
 
   return (
@@ -65,11 +83,13 @@ const Signup = () => {
               ref={confirmPasswordRef}
             />
           )}
+
           <button>{isLoggedin ? "Login" : "SignUp"}</button>
+          {isLoggedin && <a href="">Forgot Password</a>}
         </form>
       </div>
       <button onClick={onClickHandler}>
-        Have an account?{isLoggedin ? "SignUp" : "Login"}
+        {isLoggedin ? "Dont't have an account?SignUp" : "Have an account?Login"}
       </button>
     </div>
   );
