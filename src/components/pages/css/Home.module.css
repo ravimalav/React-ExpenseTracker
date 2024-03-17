@@ -1,0 +1,27 @@
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.box {
+  background-color: rgba(119, 87, 46, 0.75);
+  max-width: 40vw;
+  width: 25vw;
+  height: 8vh;
+  border-radius: 10px;
+}
+
+.container button {
+  background: none;
+  border: none;
+  border-radius: none;
+  color: rgb(20, 27, 119);
+  margin-top: 10px;
+}
+button:hover {
+  cursor: pointer;
+}

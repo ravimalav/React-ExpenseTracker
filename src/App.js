@@ -4,6 +4,7 @@ import Signup from "./components/pages/Signup";
 import { Route, Switch } from "react-router-dom";
 import { Redirect } from "react-router-dom/cjs/react-router-dom.min";
 import Home from "./components/pages/Home";
+import ContactDetails from "./components/pages/ContactDetail";
 
 function App() {
   return (
@@ -14,6 +15,9 @@ function App() {
         </Route>
         <Route path="/home">
           <Home />
+        </Route>
+        <Route path="/contact-detail">
+          <ContactDetails />
         </Route>
         <Route path="*">
           <Redirect to="/" />

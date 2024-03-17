@@ -1,7 +1,6 @@
 import React, { useContext, useRef, useState } from "react";
 import classes from "./Signup.module.css";
 import AuthContext from "../../store/context-api/AuthContext";
-import { Redirect } from "react-router-dom";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const Signup = () => {
