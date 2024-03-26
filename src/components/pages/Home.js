@@ -17,10 +17,16 @@ const Home = (props) => {
         </p>
 
         <div className={classes.box}>
-          {props.status
+          {props.isProfileUpdate
+            ? props.status && props.isProfileUpdate
+              ? "Your profile is up to date."
+              : "Your profile is incomplete."
+            : props.status && !props.isProfileUpdate
             ? "Your profile is 64% complete.A complete profile has more chance to land a job."
             : "Your profile is incomplete."}
-          <button onClick={onClickHandler}>Complete now</button>
+          {!props.isProfileUpdate && (
+            <button onClick={onClickHandler}>Complete now</button>
+          )}
         </div>
       </div>
     </>
